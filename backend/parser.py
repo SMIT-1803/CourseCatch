@@ -28,8 +28,8 @@ def parse_row(row, semester_code, observed_at):
     return {
         "slug": a.group(1),
         "semester_code": semester_code,
-        "subject": display[0].upper(),
-        "number": display[1].upper(),
+        "dept": display[0].upper(),
+        "course_code": display[1].upper(),
         "section": " ".join(display[2:]),
         "course_name": str(row[2]).strip(),
         "instructor": str(row[4]).strip(),
@@ -55,15 +55,25 @@ def parse_offerings(api_res, semester_code):
             failures.append(str(e))
     return records, failures
 
-def main():
-    url = os.environ["COURSYS_ENDPOINT"]
-    resp = requests.get(url, headers={
-        "User-Agent": f"CourseCatch/0.1 (+https://coursecatch.app; {os.getenv('MY_EMAIL')})",
+def build_url(semester_code):
+    url = os.environ["COURSYS_ENDPOINT"]+f"?tabledata=yes&semester[]={semester_code}&length=-1"
+    return url
+
+def get_api_response(url):
+    response = requests.get(url, headers={
+        "User-Agent": f"CourseCatch/0.1 (+https://coursecatch.app; {os.environ['MY_EMAIL']})",
         "Accept": "application/json",
     }, timeout=30)
-    resp.raise_for_status()
-    resp = resp.json()
-    records, failures = parse_offerings(resp, "1267")
+    response.raise_for_status()
+    api_resp = response.json()
+    return api_resp
+
+
+def main():
+    SEMESTER_CODE = os.environ['SEMESTER_CODE']
+    url = build_url(SEMESTER_CODE)
+    api_resp = get_api_response(url)
+    records, failures = parse_offerings(api_resp, SEMESTER_CODE)
     if failures:
         print(f"ABORT: {len(failures)} parse failures")
         for f in failures[:5]:
@@ -74,4 +84,5 @@ def main():
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     with open(f"snapshots/{stamp}.json", "w") as f:
         json.dump(records, f, default=str)
-main()
+
+if __name__ == "__main__": main()
