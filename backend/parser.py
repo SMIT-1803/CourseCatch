@@ -68,21 +68,14 @@ def get_api_response(url):
     api_resp = response.json()
     return api_resp
 
-
-def main():
-    SEMESTER_CODE = os.environ['SEMESTER_CODE']
-    url = build_url(SEMESTER_CODE)
-    api_resp = get_api_response(url)
-    records, failures = parse_offerings(api_resp, SEMESTER_CODE)
-    if failures:
-        print(f"ABORT: {len(failures)} parse failures")
-        for f in failures[:5]:
-            print(" ", f)
-        return
-
-    os.makedirs("snapshots", exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    with open(f"snapshots/{stamp}.json", "w") as f:
-        json.dump(records, f, default=str)
-
-if __name__ == "__main__": main()
+def get_latest_data():
+    try:
+        SEMESTER_CODE = os.environ['SEMESTER_CODE']
+        url = build_url(SEMESTER_CODE)
+        api_resp = get_api_response(url)
+        records, failures = parse_offerings(api_resp, SEMESTER_CODE)
+        if failures:
+            raise RuntimeError("Found failures")
+        return records
+    except Exception as e:
+        raise RuntimeError(f"Error caused while getting latest data: {e}")
