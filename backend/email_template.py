@@ -1,15 +1,15 @@
 def _footer(slug, observed_at):
     return [
         "",
+        f"Check on goSFU: https://go.sfu.ca"
+        "",
         f"• As of: {observed_at}",
         "",
         f"Section details: https://coursys.sfu.ca/browse/info/{slug}",
         "",
         "Please note:",
-        "• Seats may be reserved for specific programs, or blocked by an",
-        "  enrollment package. Check goSFU to confirm whether you can enroll.",
-        "• Enrollment data is refreshed once daily from Coursys, so this may",
-        "  have changed since it was observed.",
+        "• Seats may be reserved for specific programs, or blocked by an Check goSFU to confirm whether you can enroll.",
+        "• Enrollment data is refreshed once daily from Coursys, so this may have changed since it was observed.",
         "",
         "Sincerely,",
         "The CourseCatch Team",
