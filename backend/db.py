@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 import os
 import psycopg
 from psycopg.rows import dict_row
-from pathlib import Path
 
 load_dotenv()
 
@@ -61,6 +60,7 @@ def find_diff(database_state, fresh_database_records):
             or database_record["enrolled"] != row["enrolled"]
             or database_record["capacity"] != row["capacity"]
             or database_record["waitlist"] != row["waitlist"]
+            or database_record["course_name"] != row["course_name"]
         ):
             the_changes.append(record)
             continue

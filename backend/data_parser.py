@@ -3,7 +3,6 @@ import re
 from datetime import datetime, timezone
 import requests
 import os
-import json
 
 load_dotenv()
 
@@ -69,13 +68,12 @@ def get_api_response(url):
     return api_resp
 
 def get_latest_data():
-    try:
-        SEMESTER_CODE = os.environ['SEMESTER_CODE']
-        url = build_url(SEMESTER_CODE)
-        api_resp = get_api_response(url)
-        records, failures = parse_offerings(api_resp, SEMESTER_CODE)
-        if failures:
-            raise RuntimeError("Found failures")
-        return records
-    except Exception as e:
-        raise RuntimeError(f"Error caused while getting latest data: {e}")
+    SEMESTER_CODE = os.environ['SEMESTER_CODE']
+    url = build_url(SEMESTER_CODE)
+    api_resp = get_api_response(url)
+    records, failures = parse_offerings(api_resp, SEMESTER_CODE)
+    if failures:
+        raise RuntimeError(
+            f"{len(failures)} parse failures; first few: {failures[:5]}"
+        )
+    return records
