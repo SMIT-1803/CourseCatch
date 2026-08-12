@@ -9,5 +9,5 @@ SELECT *
 FROM all_triggers
 WHERE (
     (condition='waitlist_below' AND waitlist<threshold)
-    OR (condition='open_seat' AND enrolled<capacity)
+    OR (condition='open_seat' AND enrolled<capacity AND waitlist = 0)
 )
