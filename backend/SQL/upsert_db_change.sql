@@ -1,4 +1,4 @@
-INSERT INTO courses_database(slug, semester_code,dept,course_code,section,course_name,instructor,campus,enrolled,capacity,waitlist,observed_at)
+INSERT INTO courses_database(slug, semester_code,dept,course_code,section,course_name,instructor,campus,enrolled,waitlist,capacity,observed_at)
 VALUES (%s, %s, %s,%s, %s, %s,%s, %s, %s,%s, %s, %s)
 ON CONFLICT (slug)
 DO UPDATE SET 

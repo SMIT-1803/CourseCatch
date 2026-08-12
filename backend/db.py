@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 import os
 import psycopg
 from psycopg.rows import dict_row
-import json
 from pathlib import Path
 
 load_dotenv()
@@ -26,8 +25,8 @@ def get_database_data(conn):
                 "instructor": row["instructor"],
                 "campus": row["campus"],
                 "enrolled": row["enrolled"],
-                "capacity": row["capacity"],
                 "waitlist": row["waitlist"],
+                "capacity": row["capacity"],
                 "observed_at": row["observed_at"],
             }
             for row in cur
@@ -49,8 +48,8 @@ def find_diff(database_state, fresh_database_records):
             row["instructor"],
             row["campus"],
             row["enrolled"],
-            row["capacity"],
             row["waitlist"],
+            row["capacity"],
             row["observed_at"],
         )
         if database_record == None:

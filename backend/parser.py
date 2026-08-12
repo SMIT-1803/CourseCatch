@@ -35,8 +35,8 @@ def parse_row(row, semester_code, observed_at):
         "instructor": str(row[4]).strip(),
         "campus": str(row[5]).strip(),
         "enrolled": int(m.group(1)),
-        "capacity": int(m.group(2)),
         "waitlist": int(m.group(3) or 0),
+        "capacity": int(m.group(2)),
         "observed_at": observed_at,
     }
 
