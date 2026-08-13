@@ -9,14 +9,14 @@ from pathlib import Path
 load_dotenv()
 
 RESEND_API_KEY = os.environ["RESEND_API_KEY"]
-EMAIL = os.environ["EMAIL"]
+MY_EMAIL = os.environ["MY_EMAIL"]
 resend.api_key = RESEND_API_KEY
 
 
 def send_email(to, subject, body):
     params: resend.Emails.SendParams = {
         "from": "CourseCatch <alerts@mail.coursecatch.app>",
-        "reply_to": EMAIL,
+        "reply_to": MY_EMAIL,
         "to": [to],
         "subject": subject,
         "text": body,
