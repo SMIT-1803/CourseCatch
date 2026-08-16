@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { createClient } from '../lib/supabase/client'
+import SignInForm from '@/components/ui/sign-in-form';
 
 interface CourseData {
   slug:string;
@@ -18,33 +19,34 @@ interface CourseData {
 }
 
 export default function Home() {
-  const [coursesData, setCoursesData] = useState<CourseData[]>([]);
+  // const [coursesData, setCoursesData] = useState<CourseData[]>([]);
 
-  useEffect(() => {
-    const fetchData = async ()=>{
-      try{
-        const supabase = createClient();
-        const {data,error} = await supabase.from("courses_database").select();
-        if (error) {
-          console.error("Supabase error:", error.message);
-        } else if (data) {
-          setCoursesData(data);
-        }
-      }
-       catch (err) {
-        console.error("Fetch error:", err);
-      }
-    }
-    fetchData();
-  },[])
+  // useEffect(() => {
+  //   const fetchData = async ()=>{
+  //     try{
+  //       const supabase = createClient();
+  //       const {data,error} = await supabase.from("courses_database").select();
+  //       if (error) {
+  //         console.error("Supabase error:", error.message);
+  //       } else if (data) {
+  //         setCoursesData(data);
+  //       }
+  //     }
+  //      catch (err) {
+  //       console.error("Fetch error:", err);
+  //     }
+  //   }
+  //   fetchData();
+  // },[])
   
   
   return (
     <>
     <div>
-      {coursesData.map(course=>(
+      {/* {coursesData.map(course=>(
         <p key={course.slug}>{course.course_name}</p>
-      ))}
+      ))} */}
+      <SignInForm/>
     </div>
     </>
   );
