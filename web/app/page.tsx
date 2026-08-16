@@ -1,51 +1,28 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { createClient } from '../lib/supabase/client'
+import { createClient } from '../lib/supabase/server'
+import SignInForm from '@/components/sign-in-form';
+import {Button} from '@/components/ui/button'
+import {signOut} from './actions'
 
-interface CourseData {
-  slug:string;
-  semester_code:string;
-  dept:string;
-  course_code:string;
-  section:string;
-  course_name:string;
-  instructor:string;
-  campus:string;
-  enrolled:number;
-  waitlist:number;
-  capacity:number;
-  observed_at:string
-}
 
-export default function Home() {
-  const [coursesData, setCoursesData] = useState<CourseData[]>([]);
+export default async function Home() {
+  const supabase = await createClient()
+  const {data} =  await supabase.auth.getClaims()
+  const claims = data?.claims
 
-  useEffect(() => {
-    const fetchData = async ()=>{
-      try{
-        const supabase = createClient();
-        const {data,error} = await supabase.from("courses_database").select();
-        if (error) {
-          console.error("Supabase error:", error.message);
-        } else if (data) {
-          setCoursesData(data);
-        }
-      }
-       catch (err) {
-        console.error("Fetch error:", err);
-      }
-    }
-    fetchData();
-  },[])
-  
-  
+  if (!claims){
+    return <>
+      <SignInForm />
+    </>
+  }
+
   return (
     <>
-    <div>
-      {coursesData.map(course=>(
-        <p key={course.slug}>{course.course_name}</p>
-      ))}
-    </div>
+      <div>
+        <p>Signed in as {claims.email}</p>
+        <form action={signOut}>
+          <Button type="submit">Sign out</Button>
+        </form>
+      </div>
     </>
   );
 }
