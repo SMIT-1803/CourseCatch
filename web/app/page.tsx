@@ -9,7 +9,7 @@ export default async function Home() {
   const {data} =  await supabase.auth.getClaims()
   const claims = data?.claims
 
-  if (!data?.claims){
+  if (!claims){
     return <>
       <SignInForm />
     </>
