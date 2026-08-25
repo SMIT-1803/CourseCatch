@@ -41,7 +41,7 @@ const LandingHero = () => (
         {/* A watch, as it looks on the dashboard. Illustrative figures. */}
         <div>
             <div className="rounded-xl border border-border/60 bg-card p-4 shadow-sm">
-                <div className="flex items-baseline gap-2 text-sm">
+                <div className="flex flex-wrap items-baseline gap-x-2 text-sm">
                     <CourseChip>D100</CourseChip>
                     <span className="shrink-0 font-medium whitespace-nowrap">CMPT 225</span>
                     <span className="min-w-0 truncate text-muted-foreground">

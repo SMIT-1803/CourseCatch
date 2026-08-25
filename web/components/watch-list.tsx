@@ -127,7 +127,7 @@ const WatchList = ({ triggers }: WatchListProps) => {
                             <div className="flex flex-wrap items-start gap-x-4 gap-y-3">
                                 {/* identity */}
                                 <div className="min-w-0 flex-1">
-                                    <p className="flex items-baseline gap-2 text-sm">
+                                    <p className="flex flex-wrap items-baseline gap-x-2 text-sm">
                                         <CourseChip>{c.section}</CourseChip>
                                         <span className="shrink-0 font-medium whitespace-nowrap">
                                             {c.dept} {c.course_code}
