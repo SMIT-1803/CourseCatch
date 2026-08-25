@@ -3,7 +3,7 @@ import SignInForm from '@/components/sign-in-form';
 import { Button } from '@/components/ui/button'
 import { signOut } from './actions'
 import CourseSearch from '@/components/course-search';
-import WatchList from '@/components/watch-list'
+import WatchList, {type Watch} from '@/components/watch-list'
 
 
 export default async function Home() {
@@ -42,7 +42,10 @@ export default async function Home() {
   if (watchError){
     return <p>Couldn&apos;t load triggers. Try again.</p>
   }
-  console.log(watches)
+  const watchList = (watches ?? []).map((w) => ({
+  ...w,
+  courses_database: w.courses_database as unknown as Watch["courses_database"],
+  })) as Watch[];
 
   return (
     <>
@@ -52,7 +55,7 @@ export default async function Home() {
           <Button type="submit">Sign out</Button>
         </form>
         <CourseSearch courses={course_catalogue || []} />
-        <WatchList triggers={watches || []} />
+        <WatchList triggers={watchList} />
       </div>
     </>
   );
