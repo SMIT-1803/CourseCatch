@@ -14,11 +14,15 @@ import {
 } from "@/components/ui/dialog";
 import type { Course } from "./course-search";
 import { hasRoomNow } from "./course-search";
+import CapacityBar from "./capacity-bar";
+import { formatObserved, validateThreshold } from "@/lib/course-utils";
 import { addTrigger } from "@/app/actions"
 
 interface CourseSelectProps {
     course: Course | null;
     onClose: () => void;
+    /** Fires only when a watch was actually created, not on cancel. */
+    onAdded?: () => void;
 }
 
 interface ResultFormat {
@@ -27,51 +31,7 @@ interface ResultFormat {
     message: string;
 };
 
-const formatObserved = (iso: string) =>
-    new Intl.DateTimeFormat("en-CA", {
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        timeZone: "America/Vancouver",
-        timeZoneName: "short",
-    }).format(new Date(iso));
-
-const CapacityBar = ({
-    enrolled,
-    capacity,
-    waitlist,
-}: Pick<Course, "enrolled" | "capacity" | "waitlist">) => {
-    const total = Math.max(capacity, enrolled + waitlist);
-    const pct = (n: number) => `${(n / total) * 100}%`;
-    const free = Math.max(0, capacity - enrolled);
-
-    return (
-        <div className="space-y-2">
-            <div className="flex h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div className="bg-foreground/80" style={{ width: pct(enrolled) }} />
-                <div className="bg-emerald-500/70" style={{ width: pct(free) }} />
-                <div className="bg-amber-500/40" style={{ width: pct(waitlist) }} />
-            </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs tabular-nums text-muted-foreground">
-                <span>
-                    <span className="inline-block size-2 translate-y-px rounded-full bg-foreground/80" />{" "}
-                    {enrolled} enrolled
-                </span>
-                <span>
-                    <span className="inline-block size-2 translate-y-px rounded-full bg-emerald-500/70" />{" "}
-                    {free} free
-                </span>
-                <span>
-                    <span className="inline-block size-2 translate-y-px rounded-full bg-amber-500/40" />{" "}
-                    {waitlist} waiting
-                </span>
-            </div>
-        </div>
-    );
-};
-
-const CourseSelect = ({ course, onClose }: CourseSelectProps) => {
+const CourseSelect = ({ course, onClose, onAdded }: CourseSelectProps) => {
     const [wantOpenSeat, setWantOpenSeat] = useState(false);
     const [wantWaitlist, setWantWaitlist] = useState(false);
     const [threshold, setThreshold] = useState("");
@@ -79,7 +39,10 @@ const CourseSelect = ({ course, onClose }: CourseSelectProps) => {
     const [results, setResults] = useState<ResultFormat[]>([]);
     const [thresholdError, setThresholdError] = useState<string | null>(null)
 
-    // Reset whenever a different section is opened.
+    // Reset whenever a different section is opened. Deliberately an effect keyed
+    // on the slug rather than a render-time reset, so the working behavior stays
+    // untouched; the extra render is invisible behind the dialog transition.
+    /* eslint-disable react-hooks/set-state-in-effect */
     useEffect(() => {
         setWantOpenSeat(false);
         setWantWaitlist(false);
@@ -88,22 +51,13 @@ const CourseSelect = ({ course, onClose }: CourseSelectProps) => {
         setIsSubmitting(false);
         setThresholdError(null)
     }, [course?.slug]);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     if (!course) return null;
 
     const roomNow = hasRoomNow(course);
     const canQueue = course.waitlist > 0;
     const nothingChosen = !wantOpenSeat && !wantWaitlist;
-
-
-    const validateThreshold = (value: string, waitlist: number): string | null => {
-        if (value.trim() === "") return "Enter a number.";
-        const t = Number(value);
-        if (!Number.isInteger(t)) return "Whole numbers only.";
-        if (t < 1) return "Must be at least 1.";
-        if (waitlist < t) return `Already below ${t} — currently ${waitlist} waiting.`;
-        return null;
-    };
 
     const handleSubmit = async () => {
         setResults([])
@@ -119,7 +73,10 @@ const CourseSelect = ({ course, onClose }: CourseSelectProps) => {
         try {
             const res: ResultFormat[] = await addTrigger(course.slug, wantOpenSeat, wantWaitlist, t)
             setResults(res)
-            if (res.every(r => r.status === "ok")) onClose()
+            if (res.every(r => r.status === "ok")) {
+                onClose()
+                onAdded?.()
+            }
         }
         finally {
             setIsSubmitting(false)
@@ -246,8 +203,8 @@ const CourseSelect = ({ course, onClose }: CourseSelectProps) => {
                             <p
                                 key={r.condition + r.message}
                                 className={`rounded-md border px-3 py-2 text-xs ${r.status === "ok"
-                                    ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400"
-                                    : "border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400"
+                                    ? "border-success/30 bg-success/5 text-success-foreground"
+                                    : "border-warning/30 bg-warning/5 text-warning-foreground"
                                     }`}
                             >
                                 {r.message}

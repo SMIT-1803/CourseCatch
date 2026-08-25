@@ -1,7 +1,6 @@
 import { createClient } from '../lib/supabase/server'
-import SignInForm from '@/components/sign-in-form';
-import { Button } from '@/components/ui/button'
-import { signOut } from './actions'
+import LandingPage from '@/components/landing/landing-page';
+import SiteHeader from '@/components/site-header'
 import CourseSearch from '@/components/course-search';
 import WatchList, {type Watch} from '@/components/watch-list'
 
@@ -12,9 +11,7 @@ export default async function Home() {
   const claims = data?.claims
 
   if (!claims) {
-    return <>
-      <SignInForm />
-    </>
+    return <LandingPage />
   }
   const { data: course_catalogue, error } = await supabase
     .from("courses_database")
@@ -37,10 +34,24 @@ export default async function Home() {
     .order("created_at", { ascending: false })
 
   if (error) {
-    return <p>Couldn&apos;t load courses. Try again.</p>
+    return (
+      <>
+        <SiteHeader email={String(claims.email ?? "")} />
+        <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+          <p className="text-sm text-muted-foreground">Couldn&apos;t load courses. Try again.</p>
+        </main>
+      </>
+    )
   }
   if (watchError){
-    return <p>Couldn&apos;t load triggers. Try again.</p>
+    return (
+      <>
+        <SiteHeader email={String(claims.email ?? "")} />
+        <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+          <p className="text-sm text-muted-foreground">Couldn&apos;t load triggers. Try again.</p>
+        </main>
+      </>
+    )
   }
   const watchList = (watches ?? []).map((w) => ({
   ...w,
@@ -49,14 +60,22 @@ export default async function Home() {
 
   return (
     <>
-      <div>
-        <p>Signed in as {claims.email}</p>
-        <form action={signOut}>
-          <Button type="submit">Sign out</Button>
-        </form>
-        <CourseSearch courses={course_catalogue || []} />
-        <WatchList triggers={watchList} />
-      </div>
+      <SiteHeader email={String(claims.email ?? "")} />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+        {/* Search leads: adding a watch never gets buried under the list. */}
+        <section className="mx-auto max-w-2xl">
+          <CourseSearch courses={course_catalogue || []} />
+        </section>
+        <h2 className="mt-8 flex items-baseline gap-2 px-1 text-sm font-medium">
+          Watching
+          <span className="font-mono text-xs tabular-nums text-muted-foreground">
+            {watchList.length}/12
+          </span>
+        </h2>
+        <div className="mt-3">
+          <WatchList triggers={watchList} />
+        </div>
+      </main>
     </>
   );
 }

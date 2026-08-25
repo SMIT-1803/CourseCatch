@@ -3,6 +3,13 @@ import React, { useState } from 'react'
 import { createClient } from "@/lib/supabase/client"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSeparator,
+    InputOTPSlot,
+} from "@/components/ui/input-otp"
 import { useRouter } from 'next/navigation'
 
 
@@ -18,7 +25,7 @@ const SignInForm = () => {
     const signInWithOtp = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
         setError(null)
-        setIsSubmitting(true) 
+        setIsSubmitting(true)
         const supabase = createClient()
         const { error: supabaseError } = await supabase.auth.signInWithOtp({ email })
         if (supabaseError) {
@@ -50,40 +57,78 @@ const SignInForm = () => {
     }
     if (!sent) {
         return (
-            <>
-                <form onSubmit={signInWithOtp}>
+            <form onSubmit={signInWithOtp} className="space-y-3">
+                <div className="space-y-1.5">
+                    <Label htmlFor="signin-email">Email</Label>
                     <Input
+                        id="signin-email"
                         required
                         type="email"
-                        placeholder="Enter your email"
+                        placeholder="you@example.com"
+                        autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending" : "Submit"}</Button>
-                </form>
-                {error && <p className="text-sm text-red-600">{error}</p>}
-            </>
+                </div>
+                <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-brand text-white hover:bg-brand/90"
+                >
+                    {isSubmitting ? "Sending" : "Send code"}
+                </Button>
+                {error && <p className="text-sm text-destructive">{error}</p>}
+            </form>
         )
     }
     return (
-        <>
-            <p>Check your inbox — we sent a code to {email}</p>
-            <Button type="button" onClick={()=>setSent(false)}>Change Email</Button>
-            <form onSubmit={verifyOtp}>
-                <Input
-                    required
-                    inputMode="numeric"
-                    placeholder="Enter the eight digit OTP"
-                    value={code}
+        <div className="space-y-4">
+            <p className="text-sm leading-relaxed text-muted-foreground">
+                Check your inbox — we sent a code to{" "}
+                <span className="font-medium text-foreground">{email}</span>
+            </p>
+            <form onSubmit={verifyOtp} className="space-y-3">
+                <InputOTP
                     maxLength={8}
-                    onChange={(e) => setCode(e.target.value)}
-                />
-                <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Verifying" : "Enter"}</Button>
+                    inputMode="numeric"
+                    autoFocus
+                    value={code}
+                    onChange={(value) => setCode(value)}
+                    containerClassName="justify-center"
+                >
+                    <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator />
+                    <InputOTPGroup>
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                        <InputOTPSlot index={6} />
+                        <InputOTPSlot index={7} />
+                    </InputOTPGroup>
+                </InputOTP>
+                <Button
+                    type="submit"
+                    disabled={isSubmitting || code.length !== 8}
+                    className="w-full bg-brand text-white hover:bg-brand/90"
+                >
+                    {isSubmitting ? "Verifying" : "Verify code"}
+                </Button>
+                {error && <p className="text-sm text-destructive">{error}</p>}
             </form>
-            {error && <p className="text-sm text-red-600">{error}</p>}
-        </>
-
-
+            <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="w-full text-muted-foreground"
+                onClick={() => setSent(false)}
+            >
+                Change Email
+            </Button>
+        </div>
     )
 }
 

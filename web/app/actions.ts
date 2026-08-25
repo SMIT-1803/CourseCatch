@@ -34,7 +34,7 @@ function createReturnObject(condition: string, status: "ok" | "error", message: 
 async function insertTrigger(user_id: string, slug: string, condition: string, threshold: number | null = null) {
     const supabase = await createClient()
 
-    const { data: TriggerData, error: e } = await supabase.from("triggers")
+    const { error: e } = await supabase.from("triggers")
         .insert({
             user_id: user_id,
             slug: slug,
@@ -87,7 +87,7 @@ async function insertWaitlistBelow(user_id: string, slug: string, threshold: num
 
 
 export async function addTrigger(slug: string, wantOpenSeat: boolean, wantWaitlistBelow: boolean, threshold: number) {
-    let returnVal: ReturnValFormat[] = []
+    const returnVal: ReturnValFormat[] = []
     const supabase = await createClient()
     const { data: claimsData } = await supabase.auth.getClaims()
     const userId = claimsData?.claims?.sub
