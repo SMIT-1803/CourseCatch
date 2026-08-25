@@ -7,12 +7,12 @@ const steps = [
     {
         n: "2",
         title: "Pick your sections",
-        body: "Watch as many as you want. For each one, choose what counts as good news: a free seat, or the queue thinning out.",
+        body: "Watch as many as you want. For each one, choose what counts as good news: a seat available, or the waitlist thinning out.",
     },
     {
         n: "3",
         title: "Get one email",
-        body: "When it happens, one email goes out and the watch is done. You go enroll on goSFU.",
+        body: "When it happens, one email goes out and the watch is done. You go swap your waitlist or enroll on goSFU.",
     },
 ];
 

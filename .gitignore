@@ -1,13 +1,10 @@
-# Single ignore file for the whole repo — both lanes (poller and web).
-# Patterns are unanchored so they apply at any depth; the one exception is
-# noted below.
-
-# env files (can opt-in for committing if needed)
-.env*
-
 # python
 __pycache__/
 venv/
+
+.vscode/
+.env*
+
 
 # node dependencies
 node_modules/
