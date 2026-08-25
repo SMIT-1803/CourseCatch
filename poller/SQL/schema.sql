@@ -74,3 +74,7 @@ ALTER TABLE email_log ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "email_log: read" ON email_log
     for select to authenticated
     using (user_id=auth.uid());
+
+ALTER TABLE email_log
+  ADD COLUMN slug text,
+  ADD COLUMN condition text;
