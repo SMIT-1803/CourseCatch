@@ -81,7 +81,7 @@ const CourseSearch = ({ courses }: CoursesProps) => {
           />
 
           {searchQuery.trim().length >= 2 && (
-            <CommandList className="max-h-[26rem]">
+            <CommandList className="max-h-104">
               {allMatches.length === 0 && (
                 <CommandEmpty className="px-3 py-8 text-center">
                   <p className="text-sm font-medium">No sections match that</p>

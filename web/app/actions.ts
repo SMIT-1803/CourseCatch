@@ -140,3 +140,97 @@ export async function addTrigger(slug: string, wantOpenSeat: boolean, wantWaitli
     revalidatePath("/")
     return returnVal
 }
+
+export async function deleteTrigger(triggerId: number) {
+    const supabase = await createClient()
+    const { data: claimsData } = await supabase.auth.getClaims()
+    const userId = claimsData?.claims?.sub
+    if (!userId) {
+        return [
+            createReturnObject("", "error", "User not signed in.")];
+    }
+    const { error: e } = await supabase.from("triggers").delete().eq("id", triggerId).eq("user_id", userId)
+    if (e != null) {
+        return [createReturnObject("", "error", "Problem deleting the trigger")]
+    }
+    revalidatePath("/")
+    return [createReturnObject("", "ok", "Trigger deleted")]
+}
+
+
+export async function updateThreshold(triggerId: number, newThreshold: number) {
+    const supabase = await createClient()
+
+    const { data: claimsData } = await supabase.auth.getClaims()
+    const userId = claimsData?.claims?.sub
+
+    if (!userId) {
+        return [
+            createReturnObject("", "error", "User not signed in.")
+        ]
+    }
+
+    if (!Number.isInteger(newThreshold) || newThreshold < 1) {
+        return [
+            createReturnObject("", "error", "Threshold should be an integer greater than 0")
+        ]
+    }
+
+    const { data: d, error: err } = await supabase
+        .from("triggers")
+        .select("slug, condition")
+        .eq("id", triggerId)
+        .eq("user_id", userId)
+        .single()
+
+    if (err || !d) {
+        return [
+            createReturnObject("", "error", "Facing trouble fetching trigger data. Please try again later.")
+        ]
+    }
+
+    if (d.condition === "open_seat") {
+        return [
+            createReturnObject("", "error", "Invalid trigger. Open seat trigger cannot be updated")
+        ]
+    }
+
+    const { freshData, freshDataFetchError } = await fetchFreshData(
+        supabase,
+        d.slug
+    )
+
+    if (freshDataFetchError != null || freshData == null) {
+        return [
+            createReturnObject("", "error", "Facing trouble pulling data. Please try again later.")
+        ]
+    }
+
+    if (freshData.waitlist < newThreshold) {
+        return [
+            createReturnObject(
+                "waitlist_below",
+                "error",
+                `Latest data as of ${freshData.observed_at} shows section's waitlist is below threshold ${newThreshold}`
+            )
+        ]
+    }
+
+    const { error: e } = await supabase
+        .from("triggers")
+        .update({ threshold: newThreshold })
+        .eq("id", triggerId)
+        .eq("user_id", userId)
+
+    if (e != null) {
+        return [
+            createReturnObject("", "error", "Problem updating the trigger")
+        ]
+    }
+
+    revalidatePath("/")
+
+    return [
+        createReturnObject("", "ok", "Trigger updated")
+    ]
+}

@@ -70,6 +70,8 @@ def sort_triggers(triggers_to_fire):
                     "subject": subject,
                     "body": body,
                     "trigger_id": trigger_id,
+                    "slug": slug,
+                    "condition": condition,
                     "user_id": user_id,
                     "email": email,
                     "enrolled": enrolled,
@@ -96,6 +98,8 @@ def sort_triggers(triggers_to_fire):
                     "subject": subject,
                     "body": body,
                     "trigger_id": trigger_id,
+                    "slug": slug,
+                    "condition": condition,
                     "user_id": user_id,
                     "email": email,
                     "enrolled": enrolled,
@@ -106,36 +110,42 @@ def sort_triggers(triggers_to_fire):
     return sorted_triggers
 
 
-def log_email_and_update_trigger(
-    conn,
-    user_id,
-    trigger_id,
-    sent_at,
-    resend_message_id,
-    status,
-    enrolled,
-    waitlist,
-    capacity,
+def log_email_and_delete_trigger(
+    conn, user_id, slug, condition, trigger_id, sent_at, resend_message_id, status
 ):
     log_email = Path(__file__).parent / "SQL" / "log_email.sql"
     with open(log_email, "r") as f:
         log_email_query = f.read()
     with conn.cursor() as cur:
         if status == "sent":
-            update_trigger = Path(__file__).parent / "SQL" / "update_trigger.sql"
-            with open(update_trigger, "r") as f:
-                update_trigger_query = f.read()
+            delete_trigger = Path(__file__).parent / "SQL" / "delete_trigger.sql"
+            with open(delete_trigger, "r") as f:
+                delete_trigger_query = f.read()
                 cur.execute(
                     log_email_query,
-                    (user_id, trigger_id, sent_at, resend_message_id, status),
+                    (
+                        user_id,
+                        trigger_id,
+                        sent_at,
+                        resend_message_id,
+                        status,
+                        slug,
+                        condition,
+                    ),
                 )
-                cur.execute(
-                    update_trigger_query, (enrolled, waitlist, capacity, trigger_id)
-                )
+                cur.execute(delete_trigger_query, (trigger_id,))
         else:
             cur.execute(
                 log_email_query,
-                (user_id, trigger_id, sent_at, resend_message_id, status),
+                (
+                    user_id,
+                    trigger_id,
+                    sent_at,
+                    resend_message_id,
+                    status,
+                    slug,
+                    condition,
+                ),
             )
         conn.commit()
 
@@ -146,25 +156,23 @@ def send_and_log_emails(conn, triggers_to_fire):
         receiver = trigger["email"]
         subject = trigger["subject"]
         user_id = trigger["user_id"]
+        slug = trigger["slug"]
+        condition = trigger["condition"]
         trigger_id = trigger["trigger_id"]
-        enrolled = trigger["enrolled"]
-        waitlist = trigger["waitlist"]
-        capacity = trigger["capacity"]
         body = trigger["body"]
         sent_at = datetime.now(timezone.utc)
         resend_message_id = send_email(receiver, subject, body)
         status = "sent" if resend_message_id else "failed"
         try:
-            log_email_and_update_trigger(
+            log_email_and_delete_trigger(
                 conn,
                 user_id,
+                slug,
+                condition,
                 trigger_id,
                 sent_at,
                 resend_message_id,
                 status,
-                enrolled,
-                waitlist,
-                capacity,
             )
         except Exception as e:
             print(f"Issue emailing/updating trigger: {e}")
