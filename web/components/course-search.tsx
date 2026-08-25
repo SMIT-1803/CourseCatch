@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import CourseSelect from "./course-select";
 
-interface Course {
+export interface Course {
   slug: string;
   dept: string;
   course_code: string;
@@ -31,88 +31,140 @@ interface CoursesProps {
 
 const PAGE_SIZE = 40;
 
+/** A section with room and nobody queued can't be watched — the guard refuses it. */
+export const hasRoomNow = (c: Pick<Course, "enrolled" | "capacity" | "waitlist">) =>
+  c.enrolled < c.capacity && c.waitlist === 0;
+
 const CourseSearch = ({ courses }: CoursesProps) => {
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [sliceCount, setSliceCount] = useState<number>(PAGE_SIZE);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sliceCount, setSliceCount] = useState(PAGE_SIZE);
+  const [selected, setSelected] = useState<Course | null>(null);
 
-  const courseWithKeys = useMemo(() => {
-    return courses.map((course) => ({
-      ...course,
-      searchCode: (course.dept + course.course_code)
-        .toLowerCase()
-        .replace(/\s+/g, ""),
-      searchName: course.course_name.toLowerCase(),
-    }));
-  }, [courses]);
+  const courseWithKeys = useMemo(
+    () =>
+      courses.map((course) => ({
+        ...course,
+        searchCode: (course.dept + course.course_code)
+          .toLowerCase()
+          .replace(/\s+/g, ""),
+        searchName: course.course_name.toLowerCase(),
+      })),
+    [courses]
+  );
 
-  // All matches, uncapped — needed to know whether "show more" applies.
   const allMatches = useMemo(() => {
     const cleanQuery = searchQuery.toLowerCase().trim();
     const queryNoSpace = cleanQuery.replace(/\s+/g, "");
-
     if (queryNoSpace.length < 2) return [];
-
     return courseWithKeys.filter(
-      (course) =>
-        course.searchCode.includes(queryNoSpace) ||
-        course.searchName.includes(cleanQuery)
+      (c) =>
+        c.searchCode.includes(queryNoSpace) || c.searchName.includes(cleanQuery)
     );
   }, [searchQuery, courseWithKeys]);
 
-  const visibleCourses = allMatches.slice(0, sliceCount);
+  const visible = allMatches.slice(0, sliceCount);
   const hasMore = allMatches.length > sliceCount;
 
   const handleQueryChange = (value: string) => {
     setSearchQuery(value);
-    setSliceCount(PAGE_SIZE); // reset paging on a new query
+    setSliceCount(PAGE_SIZE);
   };
 
   return (
-    <div>
-      <Command shouldFilter={false}>
-        <CommandInput
-          placeholder="Search courses..."
-          value={searchQuery}
-          onValueChange={handleQueryChange}
-        />
+    <div className="space-y-3">
+      <div className="rounded-xl border border-border/60 bg-card">
+        <Command shouldFilter={false} className="bg-transparent">
+          <CommandInput
+            placeholder="Search by course code or name — try cmpt 225"
+            value={searchQuery}
+            onValueChange={handleQueryChange}
+          />
 
-        {searchQuery.trim().length >= 2 && (
-          <CommandList>
-            {allMatches.length === 0 && (
-              <CommandEmpty>
-                No results found for {searchQuery}
-              </CommandEmpty>
-            )}
+          {searchQuery.trim().length >= 2 && (
+            <CommandList className="max-h-[26rem]">
+              {allMatches.length === 0 && (
+                <CommandEmpty className="px-3 py-8 text-center">
+                  <p className="text-sm font-medium">No sections match that</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Try a course code like <span className="font-mono">cmpt 225</span>
+                  </p>
+                </CommandEmpty>
+              )}
 
-            {visibleCourses.map((course) => (
-              <CommandItem key={course.slug} value={course.slug}>
-                <CourseSelect
-                  slug={course.slug}
-                  section={course.section}
-                  dept={course.dept}
-                  course_code={course.course_code}
-                  course_name={course.course_name}
-                  enrolled={course.enrolled}
-                  capacity={course.capacity}
-                  waitlist={course.waitlist}
-                  campus={course.campus}
-                  observed_at={course.observed_at}
-                />
-              </CommandItem>
-            ))}
+              {visible.map((course) => {
+                const roomNow = hasRoomNow(course);
+                return (
+                  <CommandItem
+                    key={course.slug}
+                    value={course.slug}
+                    onSelect={() => setSelected(course)}
+                    className="gap-3 px-3 py-2.5"
+                  >
+                    {/* section code — the disambiguator, so it leads */}
+                    <span className="w-14 shrink-0 font-mono text-xs font-semibold tracking-tight text-foreground">
+                      {course.section}
+                    </span>
 
-            {hasMore && (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setSliceCount(sliceCount + PAGE_SIZE)}
-              >
-                Show more ({allMatches.length - sliceCount} remaining)
-              </Button>
-            )}
-          </CommandList>
-        )}
-      </Command>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm">
+                        <span className="font-medium">
+                          {course.dept} {course.course_code}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {" "}— {course.course_name}
+                        </span>
+                      </span>
+                      <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                        {course.campus}
+                        {course.instructor && ` · ${course.instructor}`}
+                      </span>
+                    </span>
+
+                    {/* figures: tabular so digits align down the column */}
+                    <span className="shrink-0 text-right font-mono text-xs tabular-nums">
+                      <span
+                        className={
+                          roomNow ? "text-amber-600 dark:text-amber-500" : "text-foreground"
+                        }
+                      >
+                        {course.enrolled}/{course.capacity}
+                      </span>
+                      <span className="ml-2 inline-block w-10 text-muted-foreground">
+                        {course.waitlist > 0 ? `+${course.waitlist}` : "—"}
+                      </span>
+                    </span>
+                  </CommandItem>
+                );
+              })}
+
+              {hasMore && (
+                <div className="px-3 py-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="w-full text-xs text-muted-foreground"
+                    onClick={() => setSliceCount(sliceCount + PAGE_SIZE)}
+                  >
+                    Show {Math.min(PAGE_SIZE, allMatches.length - sliceCount)} more
+                    <span className="ml-1 opacity-60">
+                      ({allMatches.length - sliceCount} left)
+                    </span>
+                  </Button>
+                </div>
+              )}
+            </CommandList>
+          )}
+        </Command>
+      </div>
+
+      <p className="px-1 text-xs text-muted-foreground">
+        Enrollment data is refreshed once daily from Coursys.
+        <span className="ml-1 text-amber-600 dark:text-amber-500">Amber</span> means
+        the section already has room and no queue — nothing to watch for.
+      </p>
+
+      <CourseSelect course={selected} onClose={() => setSelected(null)} />
     </div>
   );
 };
