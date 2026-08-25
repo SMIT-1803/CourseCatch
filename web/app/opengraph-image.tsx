@@ -37,7 +37,7 @@ export default function Image() {
                     CourseCatch
                 </div>
                 <div style={{ display: "flex", fontSize: 36, color: "#a1a1aa", marginTop: 16, maxWidth: 900, lineHeight: 1.4 }}>
-                    goSFU caps you at 2 waitlists. Watch up to 12 sections here.
+                    goSFU caps you at 2 waitlists. Watch as many sections as you want.
                 </div>
                 <div style={{ display: "flex", fontSize: 24, color: "#52525b", marginTop: 48 }}>
                     Not affiliated with or endorsed by Simon Fraser University.

@@ -69,7 +69,7 @@ export default async function Home() {
         <h2 className="mt-8 flex items-baseline gap-2 px-1 text-sm font-medium">
           Watching
           <span className="font-mono text-xs tabular-nums text-muted-foreground">
-            {watchList.length}/12
+            {watchList.length}
           </span>
         </h2>
         <div className="mt-3">

@@ -7,7 +7,7 @@ const steps = [
     {
         n: "2",
         title: "Pick your sections",
-        body: "Watch up to 12. For each one, choose what counts as good news: a free seat, or the queue thinning out.",
+        body: "Watch as many as you want. For each one, choose what counts as good news: a free seat, or the queue thinning out.",
     },
     {
         n: "3",

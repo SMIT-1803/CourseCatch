@@ -12,7 +12,7 @@ const Wordmark = ({ className }: WordmarkProps) => (
     <span className={cn("flex items-center gap-2", className)}>
         <svg
             viewBox="0 0 32 32"
-            className="size-[19px] shrink-0"
+            className="size-4.75 shrink-0"
             aria-hidden="true"
         >
             <path

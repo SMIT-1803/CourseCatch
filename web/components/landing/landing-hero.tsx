@@ -11,10 +11,8 @@ const LandingHero = () => (
             </p>
             <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
                 goSFU caps you at{" "}
-                <span className="font-mono tabular-nums">2</span> waitlists.
-                <br className="hidden sm:block" /> Watch up to{" "}
-                <span className="font-mono tabular-nums text-brand">12</span> sections
-                here.
+                <span className="font-mono tabular-nums">2</span> waitlists. Watch{" "}
+                <span className="text-brand">as many as you want</span>.
             </h1>
             <p className="mt-5 max-w-prose text-pretty text-base leading-relaxed text-muted-foreground">
                 CourseCatch keeps an eye on the sections you can&apos;t waitlist and
@@ -57,7 +55,9 @@ const LandingHero = () => (
                     <CapacityBar enrolled={118} capacity={120} waitlist={6} />
                 </div>
                 <div className="mt-3 flex items-baseline gap-3 rounded-lg bg-muted/40 px-3 py-2.5">
-                    <span className="text-xs text-muted-foreground">Queue drops below</span>
+                    <span className="text-xs text-muted-foreground">
+                        Notify when waitlist drops from
+                    </span>
                     <span className="font-mono text-sm tabular-nums">
                         <span className="text-muted-foreground">6</span>
                         <span className="mx-1.5 text-muted-foreground/50">→</span>

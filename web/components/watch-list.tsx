@@ -102,8 +102,8 @@ const WatchList = ({ triggers }: WatchListProps) => {
                 <p className="text-sm font-medium">You&apos;re not watching anything yet</p>
                 <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-muted-foreground">
                     Search above for a section and pick what you want to hear about.
-                    You&apos;ll get one email when it happens — up to twelve sections at a
-                    time.
+                    You&apos;ll get one email when it happens — watch as many sections as
+                    you want.
                 </p>
             </div>
         );

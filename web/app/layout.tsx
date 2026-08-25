@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s · CourseCatch",
   },
   description:
-    "A shadow waitlist for SFU course enrollment. Watch up to twelve sections and get one email when enrollment moves in your favour.",
+    "A shadow waitlist for SFU course enrollment. Watch as many sections as you want and get one email when enrollment moves in your favour.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

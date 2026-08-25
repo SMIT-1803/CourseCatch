@@ -1,6 +1,6 @@
 # CourseCatch
  
-A shadow waitlist for SFU course enrollment. Watch up to twelve course sections and get an email when enrollment changes in your favour.
+A shadow waitlist for SFU course enrollment. Watch as many course sections as you want and get an email when enrollment changes in your favour.
  
 **[coursecatch.app](https://coursecatch.app)**
  
