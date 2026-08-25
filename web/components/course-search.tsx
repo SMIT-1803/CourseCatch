@@ -160,8 +160,6 @@ const CourseSearch = ({ courses }: CoursesProps) => {
 
       <p className="px-1 text-xs text-muted-foreground">
         Enrollment data is refreshed once daily from Coursys.
-        <span className="ml-1 text-amber-600 dark:text-amber-500">Amber</span> means
-        the section already has room and no queue — nothing to watch for.
       </p>
 
       <CourseSelect course={selected} onClose={() => setSelected(null)} />
