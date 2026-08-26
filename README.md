@@ -27,7 +27,7 @@ It does not enroll you, hold a seat, or touch goSFU. It reads publicly visible e
  
 ## Status
  
-Built and deployed. The live window is **8–18 September 2026** — SFU's Fall add/drop period, ending when waitlists freeze.
+Built and deployed. The live window is SFU's Fall add/drop period, ending when waitlists freeze.
  
 ---
  
@@ -141,20 +141,6 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 ```
  
 The publishable key is safe in the browser — Row Level Security is what protects the data, and it's enforced in Postgres rather than in application code.
- 
-### Database
- 
-Run `migrations/001_init.sql` in the Supabase SQL editor, then any numbered migrations after it. `reset.sql` drops everything and is for development only.
- 
----
- 
-## Semester codes
- 
-`1` + two-digit year + term digit, where **1 = Spring, 4 = Summer, 7 = Fall**.
- 
-Fall 2026 is `1267`; Spring 2027 is `1271`. Compute from year and term — incrementing by 3 works within a calendar year and produces an invalid code at the boundary.
- 
----
  
 ## Data source and ethics
  
