@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { createClient } from "@/lib/supabase/client"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -20,6 +20,11 @@ const SignInForm = () => {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
     const [code, setCode] = useState<string>("")
     const router = useRouter()
+    const stalledTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    useEffect(() => () => {
+        if (stalledTimer.current) clearTimeout(stalledTimer.current)
+    }, [])
 
 
     const signInWithOtp = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -52,8 +57,11 @@ const SignInForm = () => {
             setIsSubmitting(false)
             return
         }
-        setIsSubmitting(false)
         router.refresh()
+        stalledTimer.current = setTimeout(() => {
+            setError("Something went wrong. Try again.")
+            setIsSubmitting(false)
+        }, 3000)
     }
     if (!sent) {
         return (
@@ -122,6 +130,7 @@ const SignInForm = () => {
             <Button
                 type="button"
                 variant="ghost"
+                disabled = {isSubmitting}
                 size="sm"
                 className="w-full text-muted-foreground"
                 onClick={() => setSent(false)}
