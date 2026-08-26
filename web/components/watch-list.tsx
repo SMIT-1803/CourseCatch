@@ -263,11 +263,6 @@ const WatchList = ({ triggers }: WatchListProps) => {
                     );
                 })}
             </ul>
-
-            <p className="px-1 text-xs text-muted-foreground">
-                Enrollment data is refreshed once daily from Coursys. Seats may be reserved
-                for specific programs — check goSFU to confirm you can enroll.
-            </p>
         </section>
     );
 };

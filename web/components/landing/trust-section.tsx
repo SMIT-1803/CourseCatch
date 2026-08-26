@@ -25,7 +25,7 @@ const TrustSection = () => (
             </h2>
             <p className="mt-2 max-w-prose text-sm leading-relaxed text-muted-foreground">
                 Not affiliated with or endorsed by Simon Fraser University. Built by a
-                student, for the ten days a semester when waitlists matter.
+                student, for students.
             </p>
             <dl className="mt-8 grid gap-x-8 gap-y-6 sm:grid-cols-2">
                 {points.map((point) => (

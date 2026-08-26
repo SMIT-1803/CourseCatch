@@ -4,7 +4,7 @@ const AlertConditions = () => (
     <section className="border-t border-border/60">
         <div className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6 sm:py-20">
             <h2 className="text-2xl font-semibold tracking-tight">
-                Two ways to catch a seat
+                Demo
             </h2>
             <p className="mt-2 max-w-prose text-sm leading-relaxed text-muted-foreground">
                 Every watch is one condition on one section. You pick it when you add

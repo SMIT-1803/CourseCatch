@@ -66,8 +66,7 @@ const LandingHero = () => (
                 </div>
             </div>
             <p className="mt-3 px-1 text-xs leading-relaxed text-muted-foreground">
-                One watch: when the queue thins out, one email goes to your inbox — then
-                the watch is done.
+                One watch: when the waitlist thins out, one email goes to your inbox.
             </p>
         </div>
     </section>
