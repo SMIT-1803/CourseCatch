@@ -1,0 +1,9 @@
+# Repo-wide Python dependencies.
+#
+# poller/requirements.txt is the single source of truth — Render installs from
+# it directly with its root directory set to poller/. This file includes it
+# rather than copying the pins, so the two can never drift.
+#
+#   pip install -r requirements.txt      (from the repo root)
+
+-r poller/requirements.txt

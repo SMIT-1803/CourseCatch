@@ -106,12 +106,12 @@ const CourseSearch = ({ courses }: CoursesProps) => {
                     </span>
 
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm">
-                        <span className="font-medium">
+                      <span className="flex items-baseline gap-1 text-sm">
+                        <span className="shrink-0 font-medium whitespace-nowrap">
                           {course.dept} {course.course_code}
                         </span>
-                        <span className="text-muted-foreground">
-                          {" "}— {course.course_name}
+                        <span className="min-w-0 truncate text-muted-foreground">
+                          — {course.course_name}
                         </span>
                       </span>
                       <span className="mt-0.5 block truncate text-xs text-muted-foreground">
@@ -124,7 +124,7 @@ const CourseSearch = ({ courses }: CoursesProps) => {
                     <span className="shrink-0 text-right font-mono text-xs tabular-nums">
                       <span
                         className={
-                          roomNow ? "text-amber-600 dark:text-amber-500" : "text-foreground"
+                          roomNow ? "text-warning-foreground" : "text-foreground"
                         }
                       >
                         {course.enrolled}/{course.capacity}
@@ -157,12 +157,11 @@ const CourseSearch = ({ courses }: CoursesProps) => {
           )}
         </Command>
       </div>
-
-      <p className="px-1 text-xs text-muted-foreground">
-        Enrollment data is refreshed once daily from Coursys.
-      </p>
-
-      <CourseSelect course={selected} onClose={() => setSelected(null)} />
+      <CourseSelect
+        course={selected}
+        onClose={() => setSelected(null)}
+        onAdded={() => handleQueryChange("")}
+      />
     </div>
   );
 };
