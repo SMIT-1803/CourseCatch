@@ -12,7 +12,7 @@ const Wordmark = ({ className }: WordmarkProps) => (
     <span className={cn("flex items-center gap-2", className)}>
         <svg
             viewBox="0 0 32 32"
-            className="size-4.75 shrink-0"
+            className="size-6 shrink-0"
             aria-hidden="true"
         >
             <path
@@ -24,7 +24,7 @@ const Wordmark = ({ className }: WordmarkProps) => (
             />
             <circle cx="23.2" cy="16" r="3.4" className="fill-brand" />
         </svg>
-        <span className="text-sm font-semibold tracking-tight">CourseCatch</span>
+        <span className="text-lg font-semibold tracking-tight">CourseCatch</span>
     </span>
 );
 
