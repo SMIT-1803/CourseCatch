@@ -8,10 +8,10 @@ interface SiteHeaderProps {
 
 const SiteHeader = ({ email }: SiteHeaderProps) => (
     <header className="sticky top-0 z-10 border-b border-border/60 bg-background/80 backdrop-blur">
-        <div className="mx-auto flex h-14 w-full max-w-2xl items-center justify-between gap-3 px-4 sm:px-6">
+        <div className="mx-auto flex h-14 w-full max-w-5xl  items-center justify-between gap-3 px-4 sm:px-8">
             <Wordmark />
             <div className="flex min-w-0 items-center gap-1">
-                <span className="max-w-[40vw] truncate text-xs text-muted-foreground">
+                <span className="max-w-[40vw] truncate text-sm text-muted-foreground">
                     Signed in as {email}
                 </span>
                 <form action={signOut}>
@@ -19,7 +19,6 @@ const SiteHeader = ({ email }: SiteHeaderProps) => (
                         type="submit"
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground"
                     >
                         Sign out
                     </Button>

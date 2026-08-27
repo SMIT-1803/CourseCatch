@@ -75,7 +75,7 @@ const CourseSearch = ({ courses }: CoursesProps) => {
       <div className="rounded-xl border border-border/60 bg-card">
         <Command shouldFilter={false} className="bg-transparent">
           <CommandInput
-            placeholder="Search by course code or name — try cmpt 225"
+            placeholder="Search by course code or name — try CMPT 225"
             value={searchQuery}
             onValueChange={handleQueryChange}
           />

@@ -99,7 +99,7 @@ const WatchList = ({ triggers }: WatchListProps) => {
     if (triggers.length === 0) {
         return (
             <div className="rounded-xl border border-dashed border-border/60 px-6 py-10 text-center">
-                <p className="text-sm font-medium">You&apos;re not watching anything yet</p>
+                <p className="text-sm font-medium">You&apos;re not watching any section yet</p>
                 <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-muted-foreground">
                     Search above for a section and pick what you want to hear about.
                     You&apos;ll get one email when it happens — watch as many sections as

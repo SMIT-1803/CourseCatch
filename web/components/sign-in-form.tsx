@@ -61,7 +61,7 @@ const SignInForm = () => {
         stalledTimer.current = setTimeout(() => {
             setError("Something went wrong. Try again.")
             setIsSubmitting(false)
-        }, 3000)
+        }, 5000)
     }
     if (!sent) {
         return (
